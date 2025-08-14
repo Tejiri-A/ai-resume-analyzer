@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { Route } from "./+types/home";
 import Navbar from "~/components/Navbar";
 import { resumes } from "../../constants";
 import ResumeCard from "~/components/ResumeCard";
+import { usePuterStore } from "../../lib/puter";
+import { useLocation, useNavigate } from "react-router";
 // eslint-disable-next-line no-empty-pattern
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,6 +14,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const { auth } = usePuterStore();
+  const location = useLocation();
+  const next = location.search.split("next=")[1];
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) navigate("/auth?next=/");
+  }, [auth.isAuthenticated, next]);
   return (
     <main className={`bg-[url('/images/bg-main.svg')] bg-cover`}>
       <Navbar />
